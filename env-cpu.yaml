@@ -1,0 +1,21 @@
+name: ML
+channels:
+  - anaconda
+  - conda-forge
+  - defaults
+dependencies:
+  - matplotlib
+  - pip
+  - pylint
+  - pandas
+  - numpy
+  - scipy
+  - scikit-learn
+  - jupyterlab
+  - nltk
+  - tensorflow
+  - keras
+  - pip:
+    - json-lines
+    - keras-bert==0.84.0
+    - google-cloud-translate==2.0.1
