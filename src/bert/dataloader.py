@@ -17,7 +17,7 @@ def load_data(tokenizer: Tokeniser, file_path,
     indices, sentiments = [], []
     with open(file_path, 'rb') as f:
         for item in json_lines.reader(f):
-            ids, segments = tokenizer.encode(item[text_label], max_len=max_len)
+            ids, segments = tokenizer.encode(item[text_label].lower(), max_len=max_len)
             indices.append(ids)
             sentiments.append(int(item[target_label]))
     items = list(zip(indices, sentiments))

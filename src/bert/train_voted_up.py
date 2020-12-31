@@ -14,10 +14,10 @@ config_path = os.path.join(pretrained_path, 'bert_config.json')
 checkpoint_path = os.path.join(pretrained_path, 'bert_model.ckpt')
 vocab_path = os.path.join(pretrained_path, 'vocab.txt')
 
-SEQ_LEN = 100
-BATCH_SIZE = 20
+SEQ_LEN = 128
+BATCH_SIZE = 25
 EPOCHS = 5
-LR = 1e-4
+LR = 1e-5
 
 bert_model = load_trained_model_from_checkpoint(
     config_path,
@@ -28,7 +28,7 @@ bert_model = load_trained_model_from_checkpoint(
 )
 
 tokeniser = Tokeniser(vocab_path)
-X, y = load_data(tokeniser, 'data/reviews_112_trans-en.jl', max_len=SEQ_LEN, batch_size=BATCH_SIZE)
+X, y = load_data(tokeniser, 'data/reviews_112_trans-en.jl', target_label='voted_up', max_len=SEQ_LEN, batch_size=BATCH_SIZE)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
 inputs = bert_model.inputs[:2]
@@ -50,4 +50,25 @@ model.fit(
     batch_size=BATCH_SIZE,
 )
 
-model.save('result/trained.model')
+model.save_weights('result/bert_voted_up.h5')
+
+predicts = model.predict([X_test, np.zeros_like(X_test)], verbose=True).argmax(axis=-1)
+
+tp, fp, fn, tn = 0, 0, 0, 0
+for i in range(len(predicts)):
+    if predicts[i] == 1:
+        if y_test[i] == 1:
+            tp += 1
+        else:
+            fp += 1
+    else:
+        if y_test[i] == 1:
+            fn += 1
+        else:
+            tn += 1
+
+print('Confusion matrix:')
+print('[{}, {}]'.format(tp, fp))
+print('[{}, {}]'.format(fn, tn))
+
+print('Accuracy: %.2f' % np.sum(y_test == predicts) / y_test.shape[0])

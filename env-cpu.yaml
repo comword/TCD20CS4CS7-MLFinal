@@ -18,4 +18,5 @@ dependencies:
   - pip:
     - json-lines
     - keras-bert==0.84.0
+    - keras-xlnet
     - google-cloud-translate==2.0.1
