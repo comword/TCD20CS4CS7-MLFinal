@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from keras.layers import *
 from keras.optimizers import Adam
 from keras.models import Model
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 pretrained_path = 'pretrained/uncased_L-12_H-768_A-12'
 config_path = os.path.join(pretrained_path, 'bert_config.json')
@@ -18,6 +19,7 @@ SEQ_LEN = 128
 BATCH_SIZE = 25
 EPOCHS = 5
 LR = 1e-5
+MODEL_NAME = "bert_voted_up"
 
 bert_model = load_trained_model_from_checkpoint(
     config_path,
@@ -43,14 +45,18 @@ model.compile(
 )
 model.summary()
 
+mcp_save = ModelCheckpoint("result/"+MODEL_NAME+'.best.h5', save_best_only=True, monitor='val_sparse_categorical_accuracy', mode='max')
+
 model.fit(
     [X_train, np.zeros_like(X_train)],
     y_train,
     epochs=EPOCHS,
+    validation_split=0.1,
     batch_size=BATCH_SIZE,
+    callbacks=[EarlyStopping(monitor='val_loss', patience=4), mcp_save]
 )
 
-model.save_weights('result/bert_voted_up.h5')
+model.save_weights("result/"+MODEL_NAME+".h5")
 
 predicts = model.predict([X_test, np.zeros_like(X_test)], verbose=True).argmax(axis=-1)
 
