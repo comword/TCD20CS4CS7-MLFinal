@@ -77,4 +77,4 @@ print('Confusion matrix:')
 print('[{}, {}]'.format(tp, fp))
 print('[{}, {}]'.format(fn, tn))
 
-print('Accuracy: %.2f' % np.sum(y_test == predicts) / y_test.shape[0])
+print('Accuracy: %.2f' % (100.0 * (tp + tn) / len(results)))
