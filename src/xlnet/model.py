@@ -1,7 +1,6 @@
 from keras_xlnet.backend import keras
 from keras_bert.layers import Extract
-from keras_xlnet import PretrainedList, get_pretrained_paths
-from keras_xlnet import Tokenizer, load_trained_model_from_checkpoint, ATTENTION_TYPE_BI
+from keras_xlnet import load_trained_model_from_checkpoint, ATTENTION_TYPE_BI
 
 def get_xlnet_model(paths, BATCH_SIZE, SEQ_LEN, LR):
     model = load_trained_model_from_checkpoint(
